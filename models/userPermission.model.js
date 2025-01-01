@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const permissionSchema = new mongoose.Schema({
+const UserPermissionSchema = new mongoose.Schema({
 
     user_id:{
         type: mongoose.Schema.Types.ObjectId,
@@ -21,5 +21,5 @@ const permissionSchema = new mongoose.Schema({
 
 })
 
-const Permission = mongoose.model("Permission",permissionSchema)
-export default Permission
+const UserPermission = mongoose.model("UserPermission",UserPermissionSchema)
+export default UserPermission
