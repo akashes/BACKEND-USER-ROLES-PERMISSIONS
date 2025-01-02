@@ -80,7 +80,8 @@ export const loginUser=async(req,res)=>{
             success:true,
             message:'Logged in successfully',
             tokenType:"Bearer",
-            accessToken:accessToken
+            accessToken:accessToken,
+            data:user
         })
         
     } catch (error) {
