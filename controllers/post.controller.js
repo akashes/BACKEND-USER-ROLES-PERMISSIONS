@@ -1,6 +1,7 @@
 import {validationResult} from 'express-validator'
 import Post from '../models/post.model.js'
 import Category from '../models/category.model.js'
+import Like from '../models/like.model.js'
 
 
 export const createPost=async(req,res)=>{

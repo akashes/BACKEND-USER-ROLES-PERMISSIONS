@@ -25,3 +25,22 @@ export const createUserValidator=[
     }),
 
 ]
+
+export const updateUserValidator=[
+    check('id','id is required').not().isEmpty(),
+    check('name','name is required').not().isEmpty(),
+
+]
+
+export const deleteUserValidator=[
+    check('id','id is required').not().isEmpty()
+]
+
+export const postLikeUnlikeValidator=[
+    check('user_id','user_id is required').not().isEmpty(),
+    check('post_id','post_id is required').not().isEmpty(),
+]
+
+export const postLikesValidator=[
+    check('post_id','post_id is required').not().isEmpty(),
+]

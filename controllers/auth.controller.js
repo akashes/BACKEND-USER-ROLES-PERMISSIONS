@@ -2,7 +2,8 @@ import {validationResult} from 'express-validator'
 import { comparePassword, hashPassword } from '../helpers/bcrypt.js';
 import User from '../models/user.model.js';
 import { generateJwtToken } from '../helpers/generateAccessToken.js';
-
+import Permission from '../models/permissionModel.js';
+import UserPermission from '../models/userPermission.model.js';
 
 
 export const registerUser = async (req, res) => {
@@ -17,6 +18,8 @@ export const registerUser = async (req, res) => {
                 errors:errors.array()
             })
         }
+
+
 
         const{name,email,password}=req.body
 
@@ -33,12 +36,34 @@ export const registerUser = async (req, res) => {
         const user = await User.create({
             name,
             email,
-            password:hashedPassword
+            password:hashedPassword,
         })
+
+        // assigning default permissions
+        let permissionArray = []
+        const defaultPermissions = await Permission.find({is_default:1})
+        if(defaultPermissions.length>0){
+            
+            defaultPermissions.forEach(permission=>{
+                permissionArray.push({
+                    permission_name:permission.permission_name,
+                    permission_value:[0,1,2,3]
+
+                })
+            })
+        }
+
+        const id = user._id
+        const newUserPermission= new UserPermission({
+            user_id:id,
+            permissions:permissionArray
+        })
+        const newUserPermissionData = await newUserPermission.save()
         res.status(200).json({
             success:true,
             message:'User created successfully',
-            data:user
+            data:user,
+            permissionStatus:newUserPermissionData
         })
 
         
@@ -76,12 +101,58 @@ export const loginUser=async(req,res)=>{
             message:'Invalid email or password',
         })
         const accessToken = await generateJwtToken(user)
+
+        //getting user data with all permissions
+        const result =   await User.aggregate([
+            {
+                $match:{email:user.email}
+            },
+            {
+                $lookup:{
+                    from:'userpermissions',
+                    localField:"_id",
+                    foreignField:"user_id",
+                    as:"permissions"
+                }
+            },
+            {
+                $project:{
+                    _id:0,
+                    name:1,
+                    email:1,
+                    role:1,
+                    permissions:{  // this permissions field is an array , so to access values need
+                        $cond:{         // to use [0] index. to avoid that we are returning the first index as result if permissions is array . reducing the work of frontend
+                            if:{$isArray:"$permissions"},
+                            then:{$arrayElemAt:["$permissions",0]},
+                            else:null
+                        }
+                    }
+ 
+                }
+            },
+            {
+                $addFields:{
+                    "permissions":{
+                        "permissions":"$permissions.permissions"
+                    }
+
+                }
+            }, 
+          
+           // even null is used in else portion if there is no permissions then permission field would'nt be there
+           //so we are adding a field with name permissions and value of permissions field
+        ])
+        console.log(result) 
+       
+
+
         res.status(200).json({
             success:true,
             message:'Logged in successfully',
             tokenType:"Bearer",
             accessToken:accessToken,
-            data:user
+            data:result[0]
         })
         
     } catch (error) {

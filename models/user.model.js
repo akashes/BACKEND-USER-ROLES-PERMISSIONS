@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     role:{ // role is optional when creating a new user
         type:Number,
         default:0  //0-> for normal user , 1-> admin, 2-> sub admin , 3-> editor
-    }
+    },
 
 })
 

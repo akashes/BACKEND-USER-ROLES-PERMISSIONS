@@ -4,8 +4,9 @@ import { verifyToken } from '../middlewares/auth.middleware.js'
 import { categoryAddValidator, categoryDeleteValidator, categoryUpdateValidator, postCreateValidator, postDeleteValidator, postUpdateValidator } from '../helpers/adminValidator.js'
 import { addCategory, deleteCategory, getCategories, updateCategory } from '../controllers/categoryController.js'
 import { createPost, deletePost, getPosts, updatePost } from '../controllers/post.controller.js'
-import { createUserValidator } from '../helpers/validator.js'
-import { createUser } from '../controllers/user.controller.js'
+import { createUserValidator, deleteUserValidator, postLikesValidator, postLikeUnlikeValidator, updateUserValidator } from '../helpers/validator.js'
+import { createUser, deleteUser, getUsers, updateUser } from '../controllers/user.controller.js'
+import { getPostLikes, likePost, unlikePost } from '../controllers/like.controller.js'
 
 const router = new express.Router()
 
@@ -28,6 +29,13 @@ router.post('/update-category',categoryUpdateValidator,updateCategory)
 
  //user routes
  router.post('/create-user',verifyToken,createUserValidator,createUser)
+ router.get('/get-users',verifyToken,getUsers)
+ router.put('/update-user',verifyToken,updateUserValidator,updateUser)
+ router.delete('/delete-user',deleteUserValidator,deleteUser)
 
+ //like and unlike route
+ router.post('/like-post',verifyToken,postLikeUnlikeValidator,likePost)
+ router.delete('/unlike-post',verifyToken,postLikeUnlikeValidator,unlikePost)
+ router.post('/post-like-count',postLikesValidator,getPostLikes)
 export default router
 
