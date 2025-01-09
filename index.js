@@ -6,6 +6,9 @@ import express from 'express'
 import authRoute from './routes/auth.route.js'
 import adminRoute from './routes/admin.route.js'
 import commonRoute from './routes/common.route.js'
+import { getAllRoutes } from './controllers/admin/router.controller.js'
+import { verifyToken } from './middlewares/auth.middleware.js'
+import { isAdmin } from './middlewares/admin.middleware.js'
 
 const app = express()
 
@@ -27,6 +30,10 @@ app.use('/api/admin',adminRoute)
 
 //common route
 app.use('/api',commonRoute)
+
+
+app.get('/api/admin/all-routes',verifyToken,isAdmin,getAllRoutes)
+
 
 app.listen(PORT, () => {
 

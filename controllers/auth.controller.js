@@ -4,6 +4,7 @@ import User from '../models/user.model.js';
 import { generateJwtToken } from '../helpers/generateAccessToken.js';
 import Permission from '../models/permissionModel.js';
 import UserPermission from '../models/userPermission.model.js';
+import { getUserPermissionsData } from '../helpers/helper.js';
 
 
 export const registerUser = async (req, res) => {
@@ -188,3 +189,19 @@ export const getProfile=async(req,res)=>{
         
     }
 }
+
+export const getUserPermissions=async(req,res)=>{
+    try {
+        const userId=req.user.id
+       const userPermissions= await getUserPermissionsData(userId) 
+
+        res.status(200).json({
+            success:true,
+            message:'User permissions',
+            data:userPermissions
+        })
+    } catch (error) {
+        console.log(error)
+    }
+    
+} 

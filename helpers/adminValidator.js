@@ -54,3 +54,15 @@ export const roleAddValidator=[
     check('value','value is required').not().isEmpty()
 
 ]
+export const AddRouterPermissionValidator=[
+    check('router_endpoint','router_endpoint is required').not().isEmpty(),
+    check('permission_id','permission_id is required').not().isEmpty(),
+    check('role','role is required').not().isEmpty(),
+    check('permission','permission is must be an array').isArray()
+
+]
+
+
+export const getRouterPermissionValidator=[
+    check('router_endpoint','router_endpoint is required').notEmpty()
+]
